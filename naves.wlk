@@ -5,7 +5,7 @@ class Nave {
 
   method velocidad() = velocidad
 
-  method direccionRespectoAlSol() = direccionRespectoAlSol
+  method direccionRespectoAlSol() = direccionRespectoAlSol.min(10).max(-10)
   method acelerar(cuanto) {
     velocidad = (velocidad + cuanto).min(100000).max(0)
   }
@@ -48,6 +48,17 @@ class Nave {
   }
 
   method combustible() = combustible
+
+  method estaTranquila() = combustible <= 4000 and velocidad < 12000
+
+  method escapar() {}
+
+  method avisar() {}
+
+  method recibirAmenaza() {
+    self.escapar()
+    self.avisar()
+  }
 }
 
 class NaveBaliza inherits Nave {
@@ -63,6 +74,16 @@ class NaveBaliza inherits Nave {
     self.cambiarColorDeBaliza("verde")
     self.ponerseParaleloAlSol()
     super()
+  }
+
+  override method estaTranquila() = super() and color != "rojo"
+
+  override method escapar() {
+    self.irHaciaElSol() 
+  }
+
+  override method avisar() {
+    self.cambiarColorDeBaliza("rojo")
   }
 }
 
@@ -95,6 +116,15 @@ class NavePasajeros inherits Nave {
     self.cargarBebida(6 * cantidadDePasajeros)
     super()
   }
+
+  override method escapar() {
+    velocidad = velocidad * 2
+  }
+
+  override method avisar() {
+    comida = comida - cantidadDePasajeros
+    bebida = bebida - cantidadDePasajeros
+  }
 }
 
 class NaveDeCombate inherits Nave {
@@ -113,11 +143,11 @@ class NaveDeCombate inherits Nave {
   }
 
   method desplegarMisiles() {
-    misilesDesplegados = false
+    misilesDesplegados = true
   }
 
   method  replegarMisiles() {
-    misilesDesplegados = true
+    misilesDesplegados = false
   }
 
   method misilesDesplegados() = misilesDesplegados
@@ -141,6 +171,17 @@ class NaveDeCombate inherits Nave {
     self.acelerar(15000)
     self.emitirMensaje("Saliendo en misión")
   }
+
+  override method estaTranquila() = super() and not misilesDesplegados
+
+  override method escapar() {
+    self.acercarseUnPocoAlSol()
+    self.acercarseUnPocoAlSol()
+  }
+
+  override method avisar() {
+    self.emitirMensaje("Amenaza recibida")
+  }
 }
 
 class NaveHospital inherits NavePasajeros {
@@ -148,15 +189,28 @@ class NaveHospital inherits NavePasajeros {
 
   method tieneQuirofanos() = tieneQuirofanos
 
-  method aplicarQuirofanos() {
+  method prepararQuirofanos() {
     tieneQuirofanos = true
   }
 
-  method quitarQuirofanos() {
+  method usarQuirofanos() {
     tieneQuirofanos = false
+  }
+
+  override method estaTranquila() = super() and not tieneQuirofanos
+
+  override method recibirAmenaza() {
+    super()
+    self.prepararQuirofanos()
   }
 }
 
 class NaveDeCombateSigilosa inherits NaveDeCombate {
-  
+  override method estaTranquila() = super() and estaVisible
+
+  override method escapar() {
+    super()
+    self.desplegarMisiles()
+    self.ponerseInvisible() 
+  }
 }
