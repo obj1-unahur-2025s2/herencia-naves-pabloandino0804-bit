@@ -59,16 +59,22 @@ class Nave {
     self.escapar()
     self.avisar()
   }
+
+  method estaDeRelajo() = self.estaTranquila()
 }
 
 class NaveBaliza inherits Nave {
   var color
+  var cantColoresCambiados = 0
 
   method cambiarColorDeBaliza(colorNuevo) {
     color = colorNuevo
+    cantColoresCambiados += 1
   }
 
   method color() = color
+
+  method cantColoresCambiados() = cantColoresCambiados
 
   override method prepararViaje(){
     self.cambiarColorDeBaliza("verde")
@@ -85,15 +91,19 @@ class NaveBaliza inherits Nave {
   override method avisar() {
     self.cambiarColorDeBaliza("rojo")
   }
+
+  override method estaDeRelajo() = super() and cantColoresCambiados == 0
 }
 
 class NavePasajeros inherits Nave {
   var  property cantidadDePasajeros
   var comida
   var bebida
+  var racionesServidas = 0
 
   method comida() = comida
   method bebida() = bebida
+  method racionesServidas() = racionesServidas
 
   method cargarComida(cantidad) {
     comida += cantidad
@@ -101,6 +111,7 @@ class NavePasajeros inherits Nave {
 
   method descargarComida(cantidad) {
     comida -= cantidad
+    racionesServidas += cantidad
   }
 
   method cargarBebida(cantidad) {
@@ -122,9 +133,11 @@ class NavePasajeros inherits Nave {
   }
 
   override method avisar() {
-    comida = comida - cantidadDePasajeros
-    bebida = bebida - cantidadDePasajeros
+    self.descargarComida(cantidadDePasajeros)
+    self.descargarBebida(2 * cantidadDePasajeros)
   }
+
+  override method estaDeRelajo() = super() and racionesServidas < 50
 }
 
 class NaveDeCombate inherits Nave {
