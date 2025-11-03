@@ -2,6 +2,7 @@ import naves.*
 
 describe "Naves" {
     const nave1 = new NaveBaliza(color = "rojo")
+    const nave2 = new NavePasajeros(cantidadDePasajeros = 49, comida = 0, bebida = 0)
     method initialize() {
          nave1.acelerar(30000)
     }
@@ -25,5 +26,17 @@ describe "Naves" {
     test "Testeamos errores"{
         assert.throwsExceptionWithMessage("El valor debe estar entre el 0 y el 50.000",
             {nave1.acelerar(7000)})
+    }
+
+    test "Preparacion y recibiendo Amenaza en una nave de pasajero"{
+        nave2.prepararViaje()
+        assert.equals(196, nave2.comida())
+        assert.equals(294, nave2.bebida())
+        assert.equals(5000, nave2.velocidad())
+        nave2.recibirAmenaza()
+        assert.equals(10000, nave2.velocidad())
+        assert.equals(147, nave2.comida())
+        assert.equals(196, nave2.bebida())
+
     }
 }

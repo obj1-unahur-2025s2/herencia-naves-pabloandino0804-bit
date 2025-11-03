@@ -96,7 +96,7 @@ class NaveBaliza inherits Nave {
 }
 
 class NavePasajeros inherits Nave {
-  var  property cantidadDePasajeros
+  var property cantidadDePasajeros
   var comida
   var bebida
   var racionesServidas = 0
